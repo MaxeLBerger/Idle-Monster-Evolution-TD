@@ -199,7 +199,150 @@ When creating new systems or significant features Copilot should:
 
 ---
 
-## 11. When in Doubt
+## 11. Service Registration Examples (VContainer)
+
+When creating new services, follow this pattern:
+
+### Defining a Service Interface
+
+```csharp
+// Assets/_Project/Scripts/Core/Services/IExampleService.cs
+namespace IdleMonsterTD.Core.Services
+{
+    public interface IExampleService
+    {
+        void DoSomething();
+        bool TryGetValue(string key, out int value);
+    }
+}
+```
+
+### Implementing the Service
+
+```csharp
+// Assets/_Project/Scripts/Core/Services/ExampleService.cs
+namespace IdleMonsterTD.Core.Services
+{
+    public class ExampleService : IExampleService
+    {
+        private readonly ISaveService _saveService;
+        
+        // Constructor injection
+        public ExampleService(ISaveService saveService)
+        {
+            _saveService = saveService;
+        }
+        
+        public void DoSomething()
+        {
+            // Implementation
+        }
+        
+        public bool TryGetValue(string key, out int value)
+        {
+            // Implementation
+            value = 0;
+            return false;
+        }
+    }
+}
+```
+
+### Registering in GameLifetimeScope
+
+```csharp
+// Assets/_Project/Scripts/Core/DI/GameLifetimeScope.cs
+using VContainer;
+using VContainer.Unity;
+
+namespace IdleMonsterTD.Core.DI
+{
+    public class GameLifetimeScope : LifetimeScope
+    {
+        protected override void Configure(IContainerBuilder builder)
+        {
+            // Register services as singletons
+            builder.Register<ISaveService, SaveService>(Lifetime.Singleton);
+            builder.Register<IPoolingService, PoolingService>(Lifetime.Singleton);
+            builder.Register<IAFKRewardService, AFKRewardService>(Lifetime.Singleton);
+            builder.Register<IExampleService, ExampleService>(Lifetime.Singleton);
+            
+            // Register ScriptableObject configs (drag in Inspector)
+            builder.RegisterInstance(globalBalanceConfig);
+            
+            // Register MonoBehaviour entry points
+            builder.RegisterEntryPoint<GameBootstrapper>();
+        }
+    }
+}
+```
+
+### Injecting into MonoBehaviours
+
+```csharp
+// For MonoBehaviours created by VContainer
+using VContainer;
+
+public class MyComponent : MonoBehaviour
+{
+    [Inject] private readonly IExampleService _exampleService;
+    
+    private void Start()
+    {
+        _exampleService.DoSomething();
+    }
+}
+```
+
+---
+
+## 12. Supabase Backend Integration
+
+All backend communication goes through defined interfaces. Never call Supabase SDK directly from gameplay code.
+
+### Backend Service Pattern
+
+```csharp
+// Interface in Core
+namespace IdleMonsterTD.Core.Services
+{
+    public interface ICloudSaveService
+    {
+        UniTask<bool> SaveAsync(string key, string jsonData);
+        UniTask<string> LoadAsync(string key);
+        UniTask<bool> DeleteAsync(string key);
+    }
+}
+
+// Implementation in Backend assembly
+namespace IdleMonsterTD.Backend
+{
+    public class SupabaseCloudSaveService : ICloudSaveService
+    {
+        private readonly Supabase.Client _client;
+        
+        public SupabaseCloudSaveService(IBackendConfig config)
+        {
+            // Initialize Supabase client using config (never hardcode credentials)
+        }
+        
+        public async UniTask<bool> SaveAsync(string key, string jsonData)
+        {
+            // Supabase implementation
+        }
+    }
+}
+```
+
+### Environment Configuration
+
+- Store Supabase URL and anon key in `.env` (not committed)
+- Use `IBackendConfig` to load credentials at runtime
+- Never log tokens, user IDs, or sensitive data
+
+---
+
+## 13. When in Doubt
 
 If multiple implementations are possible, Copilot should choose the one that:
 
@@ -208,4 +351,4 @@ If multiple implementations are possible, Copilot should choose the one that:
 3. Minimizes allocations and complexity.
 4. Fits the patterns used in similar existing files in this repo.
 
-If the user’s inline instructions conflict with this file, prefer the user’s explicit instructions but keep architecture and quality rules in mind.
+If the user's inline instructions conflict with this file, prefer the user's explicit instructions but keep architecture and quality rules in mind.
