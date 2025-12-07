@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"chat.tools.autoApprove": true,
+		"chat.agent.maxRequests": 1000
+	}
+}

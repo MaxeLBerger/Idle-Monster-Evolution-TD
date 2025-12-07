@@ -1,0 +1,498 @@
+## Plan: Fill `mo_issues_phase_0.md` With Full Text
+
+Here’s a concrete, execution-ready plan another agent (or you) can now follow to fully write `mo_issues_phase_0.md` in the same style as Pharrel’s docs, including explicit “Blocked by …” parts.
+
+### Steps
+
+1. **Create Intro Section**
+   - Add top-level heading `# Moritz – Phase 0 Issues (Weeks 1–4)`.
+   - Write a short paragraph:
+     - Role: integration, gameplay components, services, UI wiring.
+     - Tech context: Unity 2022/2023, C#, VContainer, ScriptableObjects.
+     - Note that the doc is written for a junior dev strong in Java but mid in Unity, so it will over-explain Unity-specific bits (MonoBehaviour lifecycle, prefabs, scenes, Inspector, ScriptableObjects, DI vs `FindObjectOfType`).
+
+2. **Add Week 2 Section and Issues #24–#27**
+   - Heading: `## Week 2 – Gameplay Systems`
+   - For each issue `#24`–`#27`, create a section like:
+     - `### Issue #24 – [Enemy] Implement EnemyMovement component`
+     - Meta line: `**Assignee:** @Moritz622  |  **Labels:** phase-0, gameplay, priority-high`
+     - Subsections:
+       - `#### Goal` — 2–4 sentences describing the in-game behaviour.
+       - `#### Pre-requisites` — bullet list, explicitly tagging:
+         - `- Max:` items (interfaces, SO classes, services).
+         - `- Pharell:` items (scenes, prefabs, SO instances).
+         - `- Status:` short note like “Blocked by Max’s `EnemyConfigSO` (#13) and Pharell’s path scene (#19).”
+       - `#### Implementation Notes` — 5–10 bullets:
+         - Script name/location.
+         - Important fields, main methods, Unity API to use.
+         - DI/ScriptableObject usage, pooling, Update/coroutine choice.
+       - `#### Definition of Done` — 4–6 checklist bullets (`- [ ] ...`) describing concrete, testable results.
+   - Repeat with tailored content for:
+     - #25 EnemyHealth (HP/damage/death/gold, GameEvent & IntVariable).
+     - #26 MonsterTargeting (range, targeting priority, enemy search).
+     - #27 MonsterAttack (projectile spawn, attack rate, special effects).
+
+3. **Add Week 3 Section and Issues #34–#38**
+   - Heading: `## Week 3 – Wave System & HUD`
+   - For each issue, use same structure (Goal / Pre-requisites / Implementation Notes / Definition of Done):
+     - #34 IWaveManager: wave progression, spawn logic, events.
+     - #35 IGameStateService: global state machine, Hub/Battle/Win/Lose, scene loading.
+     - #36 HUD wiring: bind HP/gold/wave/speed to SO variables and TMP UI.
+     - #37 Speed toggle: toggle, GameSpeed variable, Time.timeScale decision.
+     - #38 Monster placement: Input System, raycasts, MonsterFactory.
+   - For each Pre-requisites, clearly mark:
+     - Which Max tasks must be finished first (interfaces, factories, data models).
+     - Which Pharell assets must exist (HUD prefab, map slots, `GameInputActions`).
+     - Quick status phrasing, e.g. “Soft-blocked: can be prototyped with dummy data even if final wave configs aren’t ready.”
+
+4. **Add Week 4 Section and Issues #41–#44**
+   - Heading: `## Week 4 – UI Logic & Scene Flow`
+   - Add subsections with same pattern for:
+     - #41 Monster list panel logic (scroll list, selection).
+     - #42 Monster detail panel logic (stats view & level-up).
+     - #43 AFK popup logic (AFK rewards, claim).
+     - #44 Hub→Battle scene flow (button → state service → scene, back on win/lose).
+   - Emphasize:
+     - Pre-requisites in Max/Pharell’s tasks (UI prefabs, PlayerDataSO, AFK service, scenes).
+     - Implementation details around prefab instantiation, Button.onClick, data binding.
+     - Clear, user-testable Definition of Done checklists.
+
+5. **Add Cross-Cutting Notes Section**
+   - Heading: `## Cross-Cutting Notes for Moritz`
+   - 5–10 concise bullets, for example:
+     - DI vs MonoBehaviour usage (services vs components).
+     - ScriptableObject config vs runtime state variables.
+     - Pooling & `IPoolable` reset patterns.
+     - Event-driven design with `GameEvent` SOs.
+     - Recommended implementation order:
+       - Week 2 enemy/monster components → Week 3 services & HUD → Week 4 UI logic & scene flow.
+   - Optionally add a final “Suggested order” mini-list so Moritz can see a safe sequence if some tasks are blocked.
+
+If you’d like, I can now switch from planning to actually drafting the full markdown content for `mo_issues_phase_0.md` following this structure and the Pharrel-style wording.
+
+## Plan: `mo_issues_phase_0.md` Content (Draft for Review)
+
+Here’s a concrete skeleton you can now fill (or have another agent fill) with full text. It follows your Pharrel style and adds explicit “Blocked by …” notes.
+
+### File Structure Outline
+
+- Title + short intro
+- Week 2 (Gameplay Systems)
+- Week 3 (Wave System & HUD)
+- Week 4 (UI Logic & Scene Flow)
+- Cross-Cutting Notes
+
+---
+
+### Top of File
+
+- `# Moritz – Phase 0 Issues (Weeks 1–4)`
+- Short paragraph:
+  - Role: integration, game logic, components, testing.
+  - Context: Unity 2022/2023, VContainer DI, ScriptableObjects.
+  - Note: strong Java, mid Unity → explain MonoBehaviour lifecycle, prefabs, scenes, SOs.
+
+---
+
+### Week 2 – Gameplay Systems (Issues #24–#27)
+
+For each issue, use:
+
+- `## Issue #XX – [Tag] Title`
+- `**Assignee:** @Moritz622`
+- `**Labels:** phase-0, …`
+- Then sub-bullets:
+
+#### Issue #24 – [Enemy] Implement EnemyMovement component
+
+- **GOAL**
+  - Enemies move along the predefined path at config speed, damage base on arrival, then return to pool.
+
+- **PRE-REQUISITES**
+  - Max:
+    - `EnemyConfigSO` with `MoveSpeed` (issue #13).
+    - Core interfaces `IPoolable`, `IEnemy` and pooling pattern (issues #4, #5).
+  - Pharell:
+    - Battle map scene with `Waypoint` objects/path laid out (issue #19).
+  - **Blocked until:** `EnemyConfigSO`, waypoints, and pooling API exist.
+
+- **IMPLEMENTATION AREAS**
+  - Script: `EnemyMovement` MonoBehaviour under `Scripts/Gameplay/Enemy/`.
+  - Fields: reference to `EnemyConfigSO`, `Waypoint[]` path, current index.
+  - Logic: move `transform.position` toward next waypoint using `Time.deltaTime` and `MoveSpeed`.
+  - When last waypoint is reached: notify base HP variable or event, then call pool despawn.
+  - Unity hints: using serialized fields vs DI, `Update` vs coroutine, avoiding new allocations per frame.
+
+- **DONE CRITERIA**
+  - Any enemy prefab with this component follows full S-path in battle scene.
+  - Movement speed matches config.
+  - On reaching end, base HP decreases and enemy despawns via pool.
+  - No console errors; works for all enemy types.
+
+---
+
+#### Issue #25 – [Enemy] Implement EnemyHealth component
+
+- **GOAL**
+  - Give enemies HP, handle damage/death, reward gold, trigger kill events, and recycle via pool.
+
+- **PRE-REQUISITES**
+  - Max:
+    - `EnemyConfigSO` with `MaxHP`, `GoldReward` (issue #13).
+    - `IDamageable`, `IPoolable` interfaces (issue #4).
+    - Variable base classes (`IntVariable`, etc., issue #6).
+  - Pharell:
+    - `OnEnemyKilled` `GameEvent` instance and `CurrentGold` `IntVariable` (issues #17, #18).
+  - **Blocked until:** config SO and game events/variables exist.
+
+- **IMPLEMENTATION AREAS**
+  - Script: `EnemyHealth : MonoBehaviour, IDamageable`.
+  - On spawn: read MaxHP from config; reset current HP.
+  - `TakeDamage(float amount)`: subtract, check for death.
+  - On death: raise `OnEnemyKilled`, add `GoldReward` to `CurrentGold`, call pool despawn.
+  - Unity hints: use `OnEnable`/`OnDisable` to reset; reference SOs via inspector.
+
+- **DONE CRITERIA**
+  - Enemies lose HP correctly when hit.
+  - Gold increases and kill event fires on death.
+  - Enemy is removed (pooled) without `Destroy`.
+  - Works for all three starter enemy configs.
+
+---
+
+#### Issue #26 – [Monster] Implement MonsterTargeting component
+
+- **GOAL**
+  - Monsters always know which enemy to attack based on range and targeting priority from config.
+
+- **PRE-REQUISITES**
+  - Max:
+    - `MonsterConfigSO` with `Range`, `TargetingPriority` enum (issue #11).
+  - Pharell:
+    - Enemy prefabs/configs in scene (issue #14, #19).
+  - **Soft-blocked:** can prototype with temporary enemy list if final prefabs not ready.
+
+- **IMPLEMENTATION AREAS**
+  - Script: `MonsterTargeting : MonoBehaviour`.
+  - Uses config to get `Range` and priority (Nearest, First, Strongest, Fastest).
+  - Finds enemies in range via physics overlap or a shared enemy registry.
+  - Exposes `CurrentTarget` (e.g., `Transform` or `IEnemy`).
+  - Unity hints: layers/tags, `Physics.OverlapSphere`, avoiding GC allocations by caching lists.
+
+- **DONE CRITERIA**
+  - Monster picks valid in-range target matching priority rules.
+  - Target switches when old one dies or leaves range.
+  - No per-frame allocations; stable under many monsters.
+
+---
+
+#### Issue #27 – [Monster] Implement MonsterAttack component
+
+- **GOAL**
+  - Monsters fire projectiles at `CurrentTarget` with proper attack rate and special behaviours (slow, chain lightning).
+
+- **PRE-REQUISITES**
+  - Max:
+    - `MonsterConfigSO` includes `AttackSpeed`, projectile prefab, and effect stats (issue #11).
+    - `IPoolingService` and projectile pool API (issues #5, #39).
+  - Pharell:
+    - Monster configs for Flame Imp, Frost Wisp, Thunder Beast (issue #12).
+    - Basic projectile prefabs / visuals (issues #33, #40).
+  - Moritz:
+    - `MonsterTargeting` implemented (#26).
+    - `EnemyHealth` implemented (#25).
+  - **Blocked until:** at least projectile pool API and basic projectile prefab exist.
+
+- **IMPLEMENTATION AREAS**
+  - Script: `MonsterAttack : MonoBehaviour`.
+  - Read `AttackSpeed` from config, maintain cooldown timer.
+  - When ready and `CurrentTarget` not null: spawn projectile from pool, aim at target.
+  - Implement:
+    - Flame Imp: straight projectile that calls `IDamageable.TakeDamage`.
+    - Frost Wisp: projectile that also applies slow debuff (e.g., multiplier on movement speed).
+    - Thunder Beast: primary hit then chain to additional nearby enemies.
+  - Unity hints: timers with `Time.deltaTime`, using pooled projectile behaviour scripts instead of logic in MonsterAttack.
+
+- **DONE CRITERIA**
+  - Each starter monster shoots at visible rate and hits enemies.
+  - Frost Wisp clearly slows enemies (or at least via config values).
+  - Thunder Beast chains correctly to multiple targets.
+  - No `Destroy` on projectiles; all despawn via pool.
+
+---
+
+### Week 3 – Wave System & HUD (Issues #34–#38)
+
+#### Issue #34 – [Wave] Implement IWaveManager
+
+- **GOAL**
+  - Control wave spawning and progression using `WaveConfigSO` assets; track current wave and signal wave start/complete.
+
+- **PRE-REQUISITES**
+  - Max:
+    - `IWaveManager` interface, `WaveConfigSO` class (issues #4, #15).
+    - `EnemyFactory` for spawning enemies (issue #21).
+  - Pharell:
+    - 10 `WaveConfigSO` instances (issue #16).
+    - `OnWaveStart` / `OnWaveComplete` events; `CurrentWave` variable (issues #17, #18).
+  - Moritz:
+    - Enemy movement/health (#24, #25) ready.
+  - **Blocked until:** at least `WaveConfigSO` and `EnemyFactory` exist.
+
+- **IMPLEMENTATION AREAS**
+  - Service class: `WaveManager : IWaveManager` (non-MonoBehaviour, registered in `GameLifetimeScope`).
+  - Methods:
+    - Start first wave, move to next, stop waves.
+    - Get `CurrentWaveIndex`.
+  - Internal:
+    - Use coroutine/timer-based logic to spawn enemies from `WaveConfigSO` entries (type, count, interval).
+    - Raise events and update `CurrentWave` variable.
+  - Unity hints: run coroutine via a small MonoBehaviour host injected with `IWaveManager`.
+
+- **DONE CRITERIA**
+  - All 10 starter waves spawn correctly as configured.
+  - Wave start/complete events fire and UI sees current wave.
+  - Game correctly knows when all waves are done.
+
+---
+
+#### Issue #35 – [GameState] Implement IGameStateService
+
+- **GOAL**
+  - Central service tracking whether the game is in Hub, Battle, or ended, and coordinating transitions.
+
+- **PRE-REQUISITES**
+  - Max:
+    - `IGameStateService` interface + enum of states (issue #4).
+    - Scene setup and `GameLifetimeScope` (issues #1, #3, #7).
+  - Pharell:
+    - Events for win/lose (issue #17); variables like BaseHP (issue #18).
+  - Moritz:
+    - WaveManager (#34) & enemy death/base damage integration.
+  - **Soft-blocked:** logic can be stubbed early, then wired once events exist.
+
+- **IMPLEMENTATION AREAS**
+  - Service: `GameStateService : IGameStateService`.
+  - Holds current state (`Hub`, `Battle`, `Victory`, `Defeat`).
+  - Methods: `StartBattle()`, `ReturnToHub()`, `SetState(GameState)`, event/observable for state changes.
+  - Uses Unity `SceneManager` via a small scene-loading helper.
+  - Unity hints: keep DI-root in a boot scene; avoid static singletons.
+
+- **DONE CRITERIA**
+  - Other systems can query current state.
+  - Hub→Battle→Hub flow uses this service only.
+  - Win/lose transitions are deterministic and fire once.
+
+---
+
+#### Issue #36 – [UI] Wire HUD to SO variables
+
+- **GOAL**
+  - Make HUD automatically show live Base HP, Current Gold, Current Wave, and Game Speed from ScriptableObject variables.
+
+- **PRE-REQUISITES**
+  - Pharell:
+    - HUD prefab (issue #29) with text/bars set up.
+    - Variable SO instances: `BaseHP`, `CurrentGold`, `CurrentWave`, `GameSpeed` (issue #18).
+  - Max:
+    - Variable base classes (issue #6).
+  - Moritz:
+    - WaveManager & GameStateService updating those variables (#34, #35), EnemyHealth awarding gold (#25).
+  - **Soft-blocked:** can wire UI to dummy variables even before full logic.
+
+- **IMPLEMENTATION AREAS**
+  - One or more `HUD_...` scripts under `Scripts/UI/`.
+  - Serialized fields: references to SO variables and to TextMeshPro/slider components.
+  - Pattern: subscribe to variable-changed events or refresh in `Update` (for simplicity at first).
+  - Unity hints: referencing SO assets via inspector, using TextMeshProUGUI.
+
+- **DONE CRITERIA**
+  - HUD values change in play mode when underlying variables change.
+  - No direct calls from gameplay scripts to UI; only through SOs/events.
+
+---
+
+#### Issue #37 – [UI] Implement speed toggle
+
+- **GOAL**
+  - Provide a button to toggle 1x/2x (and optionally more) game speed, affecting gameplay consistently.
+
+- **PRE-REQUISITES**
+  - Pharell:
+    - Speed button on HUD prefab (issue #29).
+    - `GameSpeed` `FloatVariable` and localization keys (issues #9, #18).
+  - Max:
+    - Decision: using `Time.timeScale` vs custom multiplier.
+  - Moritz:
+    - HUD wiring base (#36).
+  - **Soft-blocked:** UI can be implemented while the exact speed application strategy is finalized.
+
+- **IMPLEMENTATION AREAS**
+  - UI script attached to speed button.
+  - Cycles between 1x and 2x; updates `GameSpeed` variable and optionally `Time.timeScale`.
+  - Updates text/icon to reflect current speed.
+  - Unity hints: use Button.onClick, avoid hard-coded strings (use localization keys).
+
+- **DONE CRITERIA**
+  - Tapping speed button visibly changes game pace.
+  - HUD clearly indicates current speed.
+  - No desync between visual speed and actual game behaviour.
+
+---
+
+#### Issue #38 – [Gameplay] Implement monster placement
+
+- **GOAL**
+  - Let player place monsters in predefined slots using the new Input System and `MonsterFactory`.
+
+- **PRE-REQUISITES**
+  - Pharell:
+    - `GameInputActions` asset & generated C# (issue #10).
+    - Battle map with monster slots (issue #19).
+  - Max:
+    - `MonsterFactory` implementation (issue #20).
+    - PlayerData representation of owned monsters (issue #22).
+  - Moritz:
+    - Monster list/detail logic (#41, #42) or at least a way to know which monster is selected.
+  - **Blocked until:** at least input asset and map slots are ready.
+
+- **IMPLEMENTATION AREAS**
+  - Controller MonoBehaviour in Battle scene, e.g., `MonsterPlacementController`.
+  - Reads input (tap/click) from `GameInputActions`.
+  - Raycasts into world/UI to find `MonsterSlot`.
+  - Asks `MonsterFactory` to spawn currently selected monster in that slot.
+  - Unity hints: physics vs UI raycasts, handling touch vs mouse.
+
+- **DONE CRITERIA**
+  - Player can select a monster and place it on valid slots.
+  - Repeated placements work without errors; no overlapping monsters.
+  - Placement respects ownership data (only owned monsters).
+
+---
+
+### Week 4 – UI Logic & Scene Flow (Issues #41–#44)
+
+#### Issue #41 – [UI] Implement Monster list panel logic
+
+- **GOAL**
+  - Show a scrollable list of owned monsters, allow selecting one.
+
+- **PRE-REQUISITES**
+  - Pharell:
+    - Monster list panel prefab with scroll rect & item template (issue #30).
+  - Max:
+    - `PlayerDataSO` storing owned monsters (issue #22).
+  - Moritz:
+    - Basic understanding of monster configs (#11, #12).
+  - **Soft-blocked:** UI logic can be stubbed while data model is finalized.
+
+- **IMPLEMENTATION AREAS**
+  - UI controller script, e.g., `MonsterListPanel`.
+  - Reads owned monsters from `PlayerDataSO`.
+  - Instantiates list items, binds icon/name/rarity.
+  - On item click: set “currently selected monster” and open detail panel.
+  - Unity hints: using prefab item with Button component; Instantiate under content transform.
+
+- **DONE CRITERIA**
+  - List matches actual owned monsters.
+  - Selecting a monster updates internal selection and can open detail.
+
+---
+
+#### Issue #42 – [UI] Implement Monster detail panel logic
+
+- **GOAL**
+  - Show detailed monster stats and allow leveling up using gold.
+
+- **PRE-REQUISITES**
+  - Pharell:
+    - Monster detail panel prefab (issue #31).
+  - Max:
+    - Data model including monster level and stat scaling (issue #22, balance config).
+    - Gold variable & cost formula.
+  - Moritz:
+    - Monster list selection from #41.
+  - **Blocked until:** final level/cost rules from Max.
+
+- **IMPLEMENTATION AREAS**
+  - UI controller: `MonsterDetailPanel`.
+  - Binds selected monster’s name, level, core stats from `PlayerDataSO` + `MonsterConfigSO`.
+  - Level-up button: checks gold, deducts, increases level, recomputes stats.
+  - Unity hints: Single source of truth for selected monster; update UI on change.
+
+- **DONE CRITERIA**
+  - Detail view updates when selection changes.
+  - Level-up correctly changes level/stats and gold, with proper blocking when insufficient gold.
+  - Changes persist via save.
+
+---
+
+#### Issue #43 – [UI] Implement AFK popup logic
+
+- **GOAL**
+  - Show AFK rewards calculated by `IAFKRewardService`, and apply them when claimed.
+
+- **PRE-REQUISITES**
+  - Pharell:
+    - AFK popup prefab (issue #32), localization keys (issue #9).
+  - Max:
+    - `IAFKRewardService` implementation (issue #23).
+    - Save and player data for updating currencies (issue #22).
+  - Moritz:
+    - HUD/Hub entry point for opening popup (#36 / hub UI).
+  - **Blocked until:** AFK service API is defined.
+
+- **IMPLEMENTATION AREAS**
+  - UI controller: `AFKPopupController`.
+  - On open: query `IAFKRewardService` for current rewards; render values.
+  - Claim: apply rewards to `PlayerDataSO` / variables, call save, close popup.
+  - Unity hints: avoid double-claim; disable button after click.
+
+- **DONE CRITERIA**
+  - AFK popup shows plausible rewards after waiting.
+  - Claim applies correct amounts and cannot be abused by re-opening.
+
+---
+
+#### Issue #44 – [Scene] Implement Hub→Battle scene flow
+
+- **GOAL**
+  - From hub, start a battle by loading battle scene and initializing services, then return to hub on finish.
+
+- **PRE-REQUISITES**
+  - Max:
+    - Scenes set up in build (Boot, Hub, Battle – issues #1, #7).
+    - DI root in Boot scene + `IGameStateService` (#35).
+  - Pharell:
+    - Hub panel prefab with “Battle” button (issue #28).
+  - Moritz:
+    - WaveManager (#34) and game state logic (#35).
+  - **Soft-blocked:** can wire rough scene changes even before full wave logic.
+
+- **IMPLEMENTATION AREAS**
+  - Hub script: on Battle button click → `GameStateService.StartBattle()` (which triggers scene load).
+  - Battle entry point: sets up wave manager, HUD, etc.
+  - On game win/lose → `GameStateService.ReturnToHub()` to load hub scene.
+  - Unity hints: use `SceneManager.LoadSceneAsync`, avoid static singletons.
+
+- **DONE CRITERIA**
+  - Player can reliably go Hub → Battle → Hub repeatedly.
+  - Services not duplicated; no crashes on repeated runs.
+
+---
+
+### Cross-Cutting Notes (End of File)
+
+Include a short section like:
+
+- **Dependency markers**
+  - Explicitly list which issues are “Blocked by Max” and “Blocked by Pharell”.
+  - Suggest safe tasks Moritz can do early (service internals, UI controllers with dummy data).
+
+- **Patterns to follow**
+  - Use DI (VContainer) for services, avoid `FindObjectOfType`.
+  - Use ScriptableObjects for config vs runtime state.
+  - Use pooling for enemies/projectiles; no runtime `new` in `Update`.
+  - Prefer `GameEvent` SOs to decouple systems.
+
+If you want, next step can be to turn this skeleton into fully written, Moritz-friendly issue text directly in `mo_issues_phase_0.md` following the Pharrel tone.

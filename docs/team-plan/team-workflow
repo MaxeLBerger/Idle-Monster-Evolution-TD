@@ -1,0 +1,158 @@
+## Plan: Updated Team Workflow with Resolved Considerations
+
+Incorporating your decisions into the team-based implementation plan with refined workflow processes.
+
+---
+
+### Resolved Workflow Decisions
+
+1. **Daily sync: Yes ✅** — 15-minute daily standups to maintain motivation, structure, and productivity. Prevents blocking issues and keeps all 3 developers aligned.
+
+2. **Code review: Minimal, only for Developer A ✅** — B reviews A's code only (SO classes, simple scripts). B and C work autonomously without mandatory reviews—trust their experience.
+
+3. **Shared test scene: Yes ✅** — Create `DevTestScene` for isolated component testing before full integration.
+
+---
+
+### Updated Workflow Structure
+
+| Process | Details |
+|---------|---------|
+| **Daily Standup** | 15 min, same time daily. Format: "Yesterday / Today / Blockers". B leads Week 1, C leads Weeks 2-4 (integration focus). |
+| **Code Reviews** | Only A → B reviews. B checks A's `*ConfigSO` classes and any scripts A writes. B and C skip reviews—merge directly. |
+| **Test Scene** | B creates `Assets/_Project/Scenes/DevTestScene.unity` in Week 1. All devs use it for isolated testing before main scene integration. |
+| **Branch Strategy** | `main` (stable), `dev` (integration). A works on `dev` directly. B and C can use feature branches or commit to `dev`. |
+
+---
+
+### Updated Week 1 — Add DevTestScene Setup
+
+| Task | Owner | Dependencies |
+|------|-------|--------------|
+| *(All existing Week 1 tasks remain)* | | |
+| **NEW:** Create `DevTestScene.unity` with basic camera, lighting, empty GameLifetimeScope for testing | **B** | Project setup |
+| **NEW:** Add `DevTestScene` checklist to README: "How to test your component in isolation" | **B** | DevTestScene |
+
+---
+
+### Daily Standup Agenda Template
+
+```
+📅 [Date] - Daily Sync (15 min max)
+
+👤 Developer A:
+  - Yesterday: 
+  - Today: 
+  - Blockers: 
+
+👤 Developer B:
+  - Yesterday: 
+  - Today: 
+  - Blockers: 
+
+👤 Developer C:
+  - Yesterday: 
+  - Today: 
+  - Blockers: 
+
+🔗 Handoffs needed today:
+  - [e.g., "B → A: GameEvent base class ready"]
+```
+
+---
+
+### DevTestScene Usage Guide (for README)
+
+```markdown
+## DevTestScene - Component Testing
+
+Use `Assets/_Project/Scenes/DevTestScene.unity` to test your work in isolation.
+
+### Developer A (SO Data)
+1. Create your SO instance (e.g., `FlameImpConfig.asset`)
+2. In DevTestScene, create empty GameObject, add a test MonoBehaviour
+3. Reference your SO, enter Play Mode, verify inspector values
+
+### Developer B (Services/Factories)
+1. Add `GameLifetimeScope` to DevTestScene if testing DI
+2. Create test consumer that injects your service
+3. Verify service behavior via Debug.Log or Gizmos
+
+### Developer C (Components)
+1. Create test prefab with your component (e.g., Enemy with EnemyMovement)
+2. Add mock waypoints in DevTestScene
+3. Enter Play Mode, verify behavior before integrating into main scene
+```
+
+---
+
+### Scaling to More Contributors (4+ Devs)
+
+If additional developers join, we keep the same core workflow and add a few simple rules so things stay fast but safe.
+
+---
+
+### Roles & Ownership
+
+- **Architecture / Core Services / Monetization**
+  - Primary owner: Max.
+  - New contributors touching these areas should request a review from Max.
+
+- **Gameplay & Integration (Components, Wave/Game State, Meta Services)**
+  - Primary owner: Moritz.
+  - New gameplay contributors request review from Moritz (or Max for more architectural changes).
+
+- **UI, SO Data, Assets, Live-Ops Content**
+  - Primary owner: Pharrel.
+  - New UI/content contributors request review from Pharrel for visual/layout changes; from Max/Moritz only when logic is involved.
+
+---
+
+### Branching & Pull Requests
+
+- **Branches**
+  - `main` – stable, tagged builds only.
+  - `dev` – integration branch; all feature branches merge here.
+  - Feature branches: `feature/<issue-number>-short-name` (e.g. `feature/34-wave-manager`).
+
+- **Working with Issues**
+  - Every PR should be tied to a GitHub issue from the project board.
+  - Use "Ready" → "In Progress" → "In Review" → "Done" transitions.
+
+- **PR Checklist (for all contributors)**
+  - [ ] Linked issue in description ("Closes #NN").
+  - [ ] Definition of Done from the dev’s `issues_phase_X.md` satisfied.
+  - [ ] Tested in `DevTestScene` and main scene (if applicable).
+  - [ ] No new warnings/errors in Console.
+
+---
+
+### Code Review Rules (4+ Devs)
+
+- **Developer A (newer coder):**
+  - All PRs require review by Max (or another designated senior dev).
+
+- **Experienced Devs (Max, Moritz, Pharrel, senior contributors):**
+  - Architecture/monetization/backend: Max review required.
+  - Core gameplay systems: Max or Moritz review required.
+  - UI/data-only changes (prefabs, SO values, layout) can be merged with a **single approval** from any senior dev.
+
+- **Drive-by / External Contributors:**
+  - Always require review from the area owner (Max/Moritz/Pharrel) before merge.
+
+---
+
+### Using DevTestScene with More People
+
+- Treat `Assets/_Project/Scenes/DevTestScene.unity` as a **shared lab**, not a long-term gameplay scene.
+- When adding test objects:
+  - Group them under clearly named root GameObjects (e.g. `Moritz_Test_EnemyWave`, `Pharrel_UI_Test_Panel`).
+  - Clean up obsolete test setups once the feature is validated and integrated.
+
+This keeps the scene usable even with many contributors.
+
+---
+
+### Further Considerations
+
+None — all decisions resolved. Ready to begin and scale implementation.
