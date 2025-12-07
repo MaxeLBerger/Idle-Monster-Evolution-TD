@@ -1,0 +1,18 @@
+consider for later impl.
+
+Plan 4th team member Simon’s role and tasks
+
+## Plan: Integrate Simon as 4th Team Member
+
+Simon becomes a non-coding Growth & Marketing Lead focused on messaging, store presence, campaigns, and KPI framing, tightly integrated with Max (monetization/backend), Moritz (gameplay/UX), and Pharrel (UI/assets). He owns copy, briefs, and feedback; devs own implementation. We’ll reflect this in your team docs and issue plan so his work slots cleanly into Phases 1–3.
+
+### Steps
+1. Define Simon’s role and boundaries (what he owns vs. does not own) for inclusion in `team-plan.md`.
+2. List Simon’s recurring responsibilities across Phases 0–3 (positioning, store copy, monetization messaging, soft-launch optimization).
+3. Describe collaboration flows between Simon and Max/Moritz/Pharrel (inputs/outputs, review loops).
+4. Specify concrete doc changes for `team-plan.md` and `team-workflow` to add Simon and a “Marketing & Growth Workflow”.
+5. Propose 4–8 new GitHub issue ideas for Simon (Phase/Week, title, one-line description) that require no coding.
+
+### Further Considerations
+1. For Simon’s issues, you can decide if they live in a new `docs/Simon_*` folder or directly in team-final-implementation.md.
+2. Optionally add a lightweight `docs/marketing/` folder later for canonical copy and messaging guidelines.
