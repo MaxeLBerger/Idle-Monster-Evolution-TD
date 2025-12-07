@@ -1,1 +1,16 @@
-{"name":"IdleMonsterTD.Backend","rootNamespace":"IdleMonsterTD.Backend","references":["IdleMonsterTD.Core"],"includePlatforms":["Editor","Windows","Android","iOS"],"excludePlatforms":[],"allowUnsafeCode":false,"overrideReferences":false,"precompiledReferences":[],"autoReferenced":true,"defineConstraints":[],"versionDefines":[],"noEngineReferences":false}
+{
+    "name": "IdleMonsterTD.Backend",
+    "rootNamespace": "IdleMonsterTD.Backend",
+    "references": [
+        "IdleMonsterTD.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
