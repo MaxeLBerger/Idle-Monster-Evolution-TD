@@ -1,0 +1,1 @@
+{"name":"IdleMonsterTD.UI","rootNamespace":"IdleMonsterTD.UI","references":["IdleMonsterTD.Core","IdleMonsterTD.Gameplay"],"includePlatforms":["Editor","Windows","Android","iOS"],"excludePlatforms":[],"allowUnsafeCode":false,"overrideReferences":false,"precompiledReferences":[],"autoReferenced":true,"defineConstraints":[],"versionDefines":[],"noEngineReferences":false}
