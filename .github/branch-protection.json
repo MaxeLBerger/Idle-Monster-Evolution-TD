@@ -1,0 +1,16 @@
+{
+  "required_status_checks": {
+    "strict": true,
+    "contexts": [
+      "CI - Unity Android Build",
+      "CI - Unity iOS Build"
+    ]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": {
+    "required_approving_review_count": 1,
+    "require_code_owner_reviews": false,
+    "dismiss_stale_reviews": true
+  },
+  "restrictions": null
+}
