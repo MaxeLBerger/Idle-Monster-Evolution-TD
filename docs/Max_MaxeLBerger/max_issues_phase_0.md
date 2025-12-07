@@ -4,12 +4,13 @@
 
 ---
 
-## Phase 0 Issue Summary (20 issues)
+## Phase 0 Issue Summary (21 issues)
 
 | # | Title | Priority | Status |
-|---|-------|----------|--------|
-| #1 | [Setup] Create Unity project with production architecture | Critical | ⬜ |
-| #2 | [Setup] Create `.github/copilot-instructions.md` | Critical | ⬜ |
+|---|-------|----------|---------|
+| #1 | [Setup] Create Unity project with production architecture | Critical | ✅ |
+| #2 | [Setup] Create `.github/copilot-instructions.md` | Critical | ✅ |
+| #2b | [CI] Setup GitHub Copilot Auto Code Review | High | ⬜ |
 | #3 | [Core] Implement VContainer GameLifetimeScope | Critical | ⬜ |
 | #4 | [Core] Create core interfaces | Critical | ⬜ |
 | #5 | [Core] Implement IPoolingService | High | ⬜ |
@@ -131,10 +132,74 @@ Include sections:
 ---
 
 ### ✅ Definition of Done
-- [ ] `.github/copilot-instructions.md` created
-- [ ] Architecture and patterns described
-- [ ] Examples for service + registration included
-- [ ] Pushed to repo so Copilot reads it
+- [x] `.github/copilot-instructions.md` created
+- [x] Architecture and patterns described
+- [x] Examples for service + registration included
+- [x] Pushed to repo so Copilot reads it
+
+---
+
+## Issue #2b: [CI] Setup GitHub Copilot Auto Code Review
+
+**Assignee:** @MaxeLBerger  
+**Labels:** `phase-0`, `ci-cd`, `priority-high`  
+**Milestone:** Phase 0 - Vertical Slice
+
+---
+
+### 🎯 Goal
+Automatische Code-Reviews durch GitHub Copilot bei jedem Pull Request auf `dev` und `main` Branches.
+
+---
+
+### 📋 Requirements
+- Automatischer Trigger bei PRs auf `dev` und `main` Branch
+- Copilot analysiert geänderte Dateien
+- Review-Kommentare direkt im PR
+- Einhaltung der `copilot-instructions.md` Richtlinien prüfen
+- Optional: Review bei neuen Pushes auf bestehende PRs
+
+---
+
+### 📝 Implementation
+
+**Setup via GitHub Repository Rulesets:**
+
+1. **Repository Settings → Rules → Rulesets → New ruleset**
+2. **New branch ruleset** erstellen
+3. **Ruleset Name:** `Copilot Auto Review`
+4. **Enforcement Status:** Active
+5. **Target branches:** Add target → Include default branch + `dev`
+6. **Branch rules:** Aktiviere `Automatically request Copilot code review`
+   - ✅ Review new pushes (optional)
+   - ✅ Review draft pull requests (optional)
+7. **Create** klicken
+
+**Voraussetzungen:**
+- GitHub Copilot Business/Enterprise für das Repository
+- `.github/copilot-instructions.md` vorhanden (für Custom Instructions)
+
+**Custom Instructions für Code Review:**
+
+Copilot verwendet automatisch die `.github/copilot-instructions.md` als Kontext für Reviews.
+
+---
+
+### 🔧 Setup-Schritte
+
+1. Navigiere zu: https://github.com/MaxeLBerger/Idle-Monster-Evolution-TD/settings/rules
+2. Klicke "New ruleset" → "New branch ruleset"
+3. Konfiguriere wie oben beschrieben
+4. Teste mit einem Test-PR
+
+---
+
+### ✅ Definition of Done
+- [ ] Branch Ruleset für Copilot Auto Review erstellt
+- [ ] Target branches: `main` und `dev` konfiguriert
+- [ ] Test-PR erstellt und von Copilot reviewt
+- [ ] Review-Kommentare erscheinen automatisch bei PRs
+- [ ] Team informiert über neuen Review-Prozess
 
 ---
 

@@ -342,7 +342,37 @@ namespace IdleMonsterTD.Backend
 
 ---
 
-## 13. When in Doubt
+## 13. Code Review Guidelines
+
+When performing a code review on this Unity/C# project, Copilot should check for:
+
+### Critical Issues (Must Fix)
+- **No Singletons:** Flag any `static Instance` patterns - use VContainer DI instead
+- **No Runtime Lookups:** Flag `FindObjectOfType`, `GameObject.Find`, `Resources.Load`
+- **No Update Allocations:** Flag `new List<>`, `new Dictionary<>`, LINQ, lambdas in `Update`/`FixedUpdate`
+- **Missing Interfaces:** Services should implement interfaces (`IServiceName`)
+- **Hardcoded Values:** Flag magic numbers - should use `*ConfigSO` ScriptableObjects
+
+### Warnings
+- **Missing Null Checks:** Especially for serialized fields and DI injections
+- **Heavy MonoBehaviours:** Logic should be in plain C# services, not MonoBehaviours
+- **Async Void:** Only allowed in Unity event handlers - prefer `async Task`
+- **Missing XML Docs:** Public API methods should have `///` documentation
+
+### Unity Best Practices
+- Prefer `[SerializeField]` over public fields
+- Cache component references - don't call `GetComponent<>` in Update
+- Use object pooling via `IPoolingService` for frequently spawned objects
+- Keep namespaces aligned with assemblies (`IdleMonsterTD.Core`, `.Gameplay`, `.UI`, `.Backend`)
+
+### Mobile Optimization
+- Watch for excessive allocations that cause GC spikes
+- Verify pooling is used for projectiles, enemies, VFX
+- Check for performance-critical code in hot paths
+
+---
+
+## 14. When in Doubt
 
 If multiple implementations are possible, Copilot should choose the one that:
 
