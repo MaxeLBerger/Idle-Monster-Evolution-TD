@@ -1,0 +1,82 @@
+Here’s a pragmatic kickoff that sets a senior-grade structure and gets Phase 0 moving fast while staying clean and testable.
+
+**Where to Start**
+- Foundations first, then gameplay slice. Begin with scenes, DI bootstrapping, core interfaces, and config SOs; then implement the wave/state systems and the first gameplay loop.
+
+**Your Focus (Architecture/Infra)**
+- Scenes & Boot:
+  - Issue `#1/#7`: Create `Boot`, `Hub`, `Battle` scenes; add to build settings.
+- DI & Scopes:
+  - Issue `#3`: Add `GameLifetimeScope` (VContainer) in `Boot`; root persists across scenes.
+  - Register core services: `IGameStateService`, `IWaveManager`, `IPoolingService`, `ICloudSaveService`, `IRemoteConfigService`.
+- Core Contracts & Data:
+  - Issue `#4`: Define interfaces (`IDamageable`, `IPoolable`, `IEnemy`, `ITargetable`, factories).
+  - Issue `#11/#13/#15`: Author `MonsterConfigSO`, `EnemyConfigSO`, `WaveConfigSO` (minimal fields, validators).
+  - Issue `#6/#17/#18`: Implement base `*Variable` and `GameEvent` SOs (wave index, gold, base HP, game speed).
+- Backend & CI guardrails:
+  - Supabase: ensure supabase-setup.md is aligned; plan `ICloudSaveService` API.
+  - CI: merge PR 118 (placeholders), then add basic checks to `dev` required reviewers (future: Unity build matrix).
+
+**Moritz622’s Focus (Gameplay/Integration)**
+- Week 2 (Core Gameplay Components):
+  - `#24` EnemyMovement: path follow to base; despawn via pool on base hit.
+  - `#25` EnemyHealth: `IDamageable`, death, gold reward, `OnEnemyKilled` GameEvent; pool return.
+  - `#26` MonsterTargeting: targeting priority (Nearest/Strongest/Fastest/First); `CurrentTarget`.
+  - `#27` MonsterAttack: attack timer; pool projectiles; DPS/slow/chain variants.
+- Week 3 (Systems/HUD/Placement):
+  - `#34` WaveManager: spawn per `WaveConfigSO`, track start/complete, events/variables.
+  - `#35` GameStateService: Hub/Battle/Victory/Defeat; scene transitions; events.
+  - `#36` HUD wiring: bind SO variables (base HP, gold, wave, speed).
+  - `#37` Speed toggle: update `GameSpeed` variable (and `Time.timeScale` if agreed).
+  - `#38` Monster placement: Input System, slot detection, spawn via `MonsterFactory`.
+- Week 4 (UI Panels/AFK/Flow):
+  - `#41/#42` Monster list/detail logic: owned monsters, selection, level-up.
+  - `#43` AFK popup: wire to `IAFKRewardService` (+ save).
+  - `#44` Hub→Battle flow: battle start and return with state.
+
+**Project Structure (Senior-Friendly)**
+- Unity folders:
+  - `Assets/IdleMonsterTD.Core/` (interfaces, core services, SO base types)
+  - `Assets/IdleMonsterTD.Gameplay/` (waves, state, enemy/monster components, factories)
+  - `Assets/IdleMonsterTD.UI/` (HUD, panels, AFK)
+  - `Assets/IdleMonsterTD.DI/` (`GameLifetimeScope`, installers)
+  - `Assets/Data/Configs/` (`*ConfigSO`, variables, events)
+- Namespaces:
+  - `IdleMonsterTD.Core` (Services, Pooling, SO Base, Backend abstractions)
+  - `IdleMonsterTD.Gameplay` (Waves, State, Enemy, Monster)
+  - `IdleMonsterTD.UI` (HUD, Panels)
+- Assembly definitions:
+  - One asmdef per top-level folder (Core/Gameplay/UI/DI) to keep coupling clean, enable unit tests per assembly.
+
+**Branch/PR Workflow**
+- Branches:
+  - Work from `dev`; one branch per issue (e.g., `feature/24-enemy-movement`).
+- PRs:
+  - Draft PRs into `dev`; include checklist:
+    - Interfaces/impls present; DI registration done; SO assets or stubs; DevTestScene manual check; adherence to DI/no-singletons/no-Find*/no allocations in hot paths.
+  - “Relates to #<issue>” (switch to “Closes #<issue>” once complete); 1 review required.
+- CI:
+  - Keep placeholders active; later replace with Unity build steps; add required status checks to `main`.
+
+**Quality Rules to Enforce**
+- DI everywhere; zero singletons; zero `FindObjectOfType`/`Resources.Load` in runtime.
+- ScriptableObject-driven configs and runtime variables; GameEvents for decoupling.
+- Pooling-first mindset; no `Destroy` in runtime loop; reset state on reuse.
+- No allocations in `Update`/hot paths; avoid LINQ in tight loops.
+- Backend through interfaces; never embed secrets; use `.env` and CI secrets.
+
+If you want, I can create issue-specific PR checklist templates and a short “service registration matrix” for `GameLifetimeScope` to accelerate consistent implementation across branches.
+\n+\n+PR Checklist (Phase 0)
+- Interfaces under correct namespaces and assemblies
+- DI registrations done in `GameLifetimeScope` (no singletons)
+- ScriptableObjects: configs/variables/events created or stubbed; validators present
+- No `FindObjectOfType`/`Resources.Load` in runtime logic
+- Pooling respected; no `Destroy`; no allocations in hot paths
+- DevTestScene manual test steps documented in PR body
+- “Relates to #<issue>” links (use “Closes” only when complete)
+- No secrets in code; `.env` used
+- CI placeholders acknowledged or passing
+\n+Service Registration Matrix (VContainer)
+- Core: `IPoolingService`, `ICloudSaveService`, `IRemoteConfigService` → singletons
+- Gameplay: `IGameStateService`, `IWaveManager`, `IMonsterPlacementService` → singletons
+- Scene bridges (MonoBehaviours) receive services via injection
