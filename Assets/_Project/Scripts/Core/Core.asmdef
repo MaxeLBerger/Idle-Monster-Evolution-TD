@@ -1,7 +1,9 @@
 {
     "name": "IdleMonsterTD.Core",
     "rootNamespace": "IdleMonsterTD.Core",
-    "references": [],
+    "references": [
+        "VContainer"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

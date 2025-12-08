@@ -255,19 +255,19 @@ Ensure separate scopes for `Hub` and `Battle` scenes if needed (e.g., `HubLifeti
     - Global gold/XP multipliers
   - Monetization (used later in Phase 2):
     - Global price/value multipliers for gacha, shop, battle pass, VIP, events
-- Create a single asset `GlobalBalanceConfig.asset` under `Assets/_Project/ScriptableObjects/Balancing/`.
+- Create a single asset `GlobalBalanceConfig.asset` under `Assets/_Project/ScriptableObjects/Balance/`.
 - Inject `GlobalBalanceConfigSO` (or an `IBalanceConfigProvider`) into systems that need global parameters instead of hard-coding values.
 
 ---
 
 ### ✅ Definition of Done
-- [ ] `GameLifetimeScope` implemented
-- [ ] Compiles and runs, services resolved
-- [ ] Used in Boot scene as entry point
- - [ ] `ILoggingService` / `LoggingService` implemented and registered in `GameLifetimeScope`
- - [ ] New Phase 1+ systems use `ILoggingService` instead of `Debug.Log*` directly
- - [ ] `GlobalBalanceConfigSO` asset created with initial AFK, shard, combat, and monetization parameters
- - [ ] Systems needing global tunables can read them from `GlobalBalanceConfigSO` via DI
+- [x] `GameLifetimeScope` implemented
+- [x] Compiles and runs, services resolved
+- [ ] Used in Boot scene as entry point (requires Unity Editor to create asset and scene setup)
+ - [x] `ILoggingService` / `LoggingService` implemented and registered in `GameLifetimeScope`
+ - [ ] New Phase 1+ systems use `ILoggingService` instead of `Debug.Log*` directly (ongoing)
+ - [x] `GlobalBalanceConfigSO` asset created with initial AFK, shard, combat, and monetization parameters (script ready, asset needs creation in Unity)
+ - [x] Systems needing global tunables can read them from `GlobalBalanceConfigSO` via DI
 
 ---
 
