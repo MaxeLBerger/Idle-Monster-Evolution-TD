@@ -293,16 +293,16 @@ Create basic interfaces (minimal methods to start):
 - `IAFKRewardService` (Issue #23)
 - `IPoolingService` (Issue #5)
 - `IMonsterFactory`, `IEnemyFactory` (Issues #20, #21)
-- `IGameStateService`, `IWaveManager` (for Moritz’s work)
+- `IGameStateService`, `IWaveManager` (for Moritz's work)
 
 Keep them small and focused; implementations come in their own issues.
 
 ---
 
 ### ✅ Definition of Done
-- [ ] Interfaces created in `Core/Services`
-- [ ] Namespaces consistent (`IdleMonsterTD.Core.Services`)
-- [ ] No concrete implementation logic here
+- [x] Interfaces created in `Core/Services`
+- [x] Namespaces consistent (`IdleMonsterTD.Core.Services`)
+- [x] No concrete implementation logic here
 
 ---
 
