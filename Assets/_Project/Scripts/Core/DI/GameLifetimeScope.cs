@@ -20,6 +20,7 @@ namespace IdleMonsterTD.Core.DI
         {
             // ============ Core Services ============
             builder.Register<ILoggingService, LoggingService>(Lifetime.Singleton);
+            builder.Register<IPoolingService, PoolingService>(Lifetime.Singleton);
 
             // ============ Configuration ScriptableObjects ============
             if (_globalBalanceConfig != null)
@@ -34,7 +35,6 @@ namespace IdleMonsterTD.Core.DI
             // ============ Future Services (Phase 1+) ============
             // TODO: Register these services as they are implemented
             // builder.Register<ISaveService, SaveService>(Lifetime.Singleton);
-            // builder.Register<IPoolingService, PoolingService>(Lifetime.Singleton);
             // builder.Register<IAFKRewardService, AFKRewardService>(Lifetime.Singleton);
             // builder.Register<IGameStateService, GameStateService>(Lifetime.Singleton);
 

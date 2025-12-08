@@ -335,10 +335,10 @@ Register `PoolingService` as singleton in `GameLifetimeScope`.
 ---
 
 ### ✅ Definition of Done
-- [ ] `IPoolingService` interface defined
-- [ ] `PoolingService` implementation complete
-- [ ] Used by projectile/enemy systems
-- [ ] No major allocations during gameplay
+- [x] `IPoolingService` interface defined
+- [x] `PoolingService` implementation complete
+- [ ] Used by projectile/enemy systems (will be integrated in Issue #39)
+- [ ] No major allocations during gameplay (will be verified in Issue #48)
 
 ---
 
